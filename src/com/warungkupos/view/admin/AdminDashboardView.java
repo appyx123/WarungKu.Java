@@ -5,22 +5,21 @@ import com.warungkupos.service.ProductManagementService;
 import com.warungkupos.service.TransactionHandlingService;
 import com.warungkupos.service.RecycleBinService;
 import com.warungkupos.service.ReportGenerationService;
-import com.warungkupos.service.StockNotificationService; 
-import com.warungkupos.service.AuthenticationService; // Tambahkan import ini
+import com.warungkupos.service.StockNotificationService;
+import com.warungkupos.service.AuthenticationService;
 import com.warungkupos.service.*; // Impor semua implementasi service
 import com.warungkupos.util.AppConstants;
 import com.warungkupos.util.UIManagerSetup;
 import com.warungkupos.view.auth.LoginView;
 import com.warungkupos.model.User; 
-import com.warungkupos.dao.UserDao; // Tambahkan import ini untuk UserDao
-import com.warungkupos.dao.impl.UserDaoImpl; // Tambahkan import ini untuk UserDaoImpl
+import com.warungkupos.dao.UserDao; 
+import com.warungkupos.dao.impl.UserDaoImpl; 
 
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener; 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -31,37 +30,33 @@ public class AdminDashboardView extends JFrame {
     private JButton logoutButton;
     private User loggedInAdmin; 
 
-    // Instance Services (diinisialisasi di konstruktor AdminDashboardView)
+    // Instance Services
     private ProductManagementService productManagementService;
     private TransactionHandlingService transactionHandlingService;
     private RecycleBinService recycleBinService;
     private ReportGenerationService reportGenerationService;
     private StockNotificationService stockNotificationService; 
-    private AuthenticationService authenticationService; // Tambahkan field ini
-    private UserDao userDao; // Tambahkan field ini
+    private AuthenticationService authenticationService;
+    private UserDao userDao; 
 
-    // Referensi Controller yang mungkin perlu diakses dari AdminDashboardView
+    // Referensi Controller
     private ProductController productController; 
-    // Anda bisa tambahkan referensi controller lain jika perlu interaksi langsung dari dashboard
+    private AdminMainDashboardController adminMainDashboardController; // <--- BARU: Field untuk controller dashboard utama
 
     public AdminDashboardView() { 
-        // Anda bisa tambahkan User admin sebagai parameter jika perlu
-        // this.loggedInAdmin = loggedInAdmin; // Jika Anda passing User saat membuat AdminDashboardView
-        
         setTitle(AppConstants.ADMIN_DASHBOARD_TITLE + (loggedInAdmin != null ? " - User: " + loggedInAdmin.getUsername() : ""));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setMinimumSize(new Dimension(1024, 720)); 
         setLocationRelativeTo(null);
 
-        // --- Inisialisasi semua Service dan DAO yang dibutuhkan ---
+        // Inisialisasi semua Service dan DAO yang dibutuhkan
         this.productManagementService = new ProductManagementServiceImpl();
         this.transactionHandlingService = new TransactionHandlingServiceImpl();
         this.recycleBinService = new RecycleBinServiceImpl();
         this.reportGenerationService = new ReportGenerationServiceImpl();
         this.stockNotificationService = new StockNotificationServiceImpl(); 
-        this.authenticationService = new AuthenticationServiceImpl(); // Inisialisasi AuthenticationService
-        this.userDao = new UserDaoImpl(); // Inisialisasi UserDao
-        // --------------------------------------------------------
+        this.authenticationService = new AuthenticationServiceImpl(); 
+        this.userDao = new UserDaoImpl(); 
 
         initComponents();
         addListeners(); 
@@ -97,46 +92,58 @@ public class AdminDashboardView extends JFrame {
         tabbedPane = new JTabbedPane();
         tabbedPane.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
-        // --- Mengisi Tab dengan Panel Manajemen ---
+        // --- MENGISI TAB DENGAN PANEL MANAJEMEN ---
 
-        // 1. Tab Produk
+        // <--- BARU: 1. Tab Dasbor Utama (statistik)
+        AdminMainDashboardPanel mainDashboardPanel = new AdminMainDashboardPanel();
+        this.adminMainDashboardController = new AdminMainDashboardController(
+            mainDashboardPanel, 
+            productManagementService, 
+            transactionHandlingService, 
+            reportGenerationService, 
+            stockNotificationService,
+            userDao // Jangan lupa pass userDao
+        );
+        tabbedPane.addTab("Dasbor Utama", mainDashboardPanel);
+        // <--- AKHIR BARU
+
+        // 2. Tab Produk (ID produk 0)
         ProductManagementPanel productPanel = new ProductManagementPanel();
         this.productController = new ProductController(productPanel, productManagementService); 
         tabbedPane.addTab("Produk", productPanel);
 
-        // 2. Tab Kategori
+        // 3. Tab Kategori
         CategoryManagementPanel categoryPanel = new CategoryManagementPanel();
         new CategoryController(categoryPanel, productManagementService);
         tabbedPane.addTab("Kategori", categoryPanel);
 
-        // 3. Tab Supplier
+        // 4. Tab Supplier
         SupplierManagementPanel supplierPanel = new SupplierManagementPanel();
         new SupplierController(supplierPanel, productManagementService);
         tabbedPane.addTab("Supplier", supplierPanel);
 
-        // 4. Tab Transaksi
+        // 5. Tab Transaksi
         TransactionManagementPanel transactionPanel = new TransactionManagementPanel();
         new TransactionController(transactionPanel, transactionHandlingService, recycleBinService);
         tabbedPane.addTab("Transaksi", transactionPanel);
 
-        // 5. Tab Recycle Bin
+        // 6. Tab Recycle Bin
         RecycleBinPanel recycleBinPanel = new RecycleBinPanel();
         new RecycleBinController(recycleBinPanel, recycleBinService);
         tabbedPane.addTab("Recycle Bin", recycleBinPanel);
 
-        // 6. Tab Laporan
+        // 7. Tab Laporan
         ReportPanel reportPanel = new ReportPanel();
         new ReportController(reportPanel, reportGenerationService);
         tabbedPane.addTab("Laporan", reportPanel);
         
-        // 7. Tab Peringatan Stok
+        // 8. Tab Peringatan Stok
         StockAlertPanel stockAlertPanel = new StockAlertPanel();
         new StockAlertController(stockAlertPanel, stockNotificationService); 
         tabbedPane.addTab("Peringatan Stok", stockAlertPanel);
 
-        // 8. Tab Pengguna (User Management) - BARU DITAMBAHKAN
+        // 9. Tab Pengguna (User Management)
         UserManagementPanel userManagementPanel = new UserManagementPanel();
-        // Berikan AuthenticationService dan UserDao ke UserController
         new UserController(userManagementPanel, authenticationService, userDao); 
         tabbedPane.addTab("Pengguna", userManagementPanel);
 
@@ -165,17 +172,15 @@ public class AdminDashboardView extends JFrame {
                 int selectedIndex = sourceTabbedPane.getSelectedIndex();
                 String selectedTitle = sourceTabbedPane.getTitleAt(selectedIndex);
 
-                // --- Refresh data saat tab tertentu dipilih ---
+                // Refresh data saat tab tertentu dipilih
                 if ("Produk".equals(selectedTitle) && productController != null) {
-                    productController.refreshCategoriesComboBox(); // Refresh kategori di tab Produk
+                    productController.refreshCategoriesComboBox(); 
+                    productController.refreshSuppliersComboBox(); // <--- BARU: Refresh supplier juga
                     // productController.loadProducts(); // Anda bisa juga refresh produk di sini
-                } 
-                // Jika Anda ingin refresh data di tab lain saat tabnya dipilih, tambahkan logika di sini.
-                // Misal:
-                // if ("Kategori".equals(selectedTitle)) {
-                //      ((CategoryController)getControllerForTab(sourceTabbedPane, selectedTitle)).loadCategories();
-                // }
-                // Ini memerlukan AdminDashboardView menyimpan referensi ke semua controllernya atau mencari controller berdasarkan panel
+                } else if ("Dasbor Utama".equals(selectedTitle) && adminMainDashboardController != null) { // <--- BARU: Refresh Dasbor Utama
+                    adminMainDashboardController.refreshStats();
+                }
+                // Anda bisa menambahkan logika serupa untuk tab lain jika perlu refresh data saat tab dipilih
             }
         });
     }
@@ -188,7 +193,6 @@ public class AdminDashboardView extends JFrame {
             this.dispose();
             EventQueue.invokeLater(() -> {
                 LoginView loginView = new LoginView();
-                // Pastikan AuthController mendapatkan AuthenticationService yang sudah diinisialisasi
                 loginView.setAuthController(new AuthController(new AuthenticationServiceImpl()));
                 loginView.setVisible(true);
             });
@@ -198,9 +202,7 @@ public class AdminDashboardView extends JFrame {
     public static void main(String[] args) {
         UIManagerSetup.setupLookAndFeel();
         EventQueue.invokeLater(() -> {
-            // Untuk testing, Anda bisa membuat user admin dummy jika diperlukan
-            // User adminUser = new User(); adminUser.setUsername("testAdmin"); adminUser.setRole(AppConstants.ROLE_ADMIN);
-            AdminDashboardView adminDashboard = new AdminDashboardView(/* adminUser */);
+            AdminDashboardView adminDashboard = new AdminDashboardView();
             adminDashboard.setVisible(true);
         });
     }

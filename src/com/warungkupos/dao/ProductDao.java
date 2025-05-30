@@ -31,4 +31,7 @@ public interface ProductDao {
 
     // updateProductStock (metode ini tidak berubah karena hanya memengaruhi stok)
     boolean updateProductStock(int productId, int newStock, Connection conn) throws Exception;
+    
+    // <--- METODE BARU: Untuk mengecek apakah supplier sedang digunakan
+    boolean isSupplierInUse(int supplierId) throws Exception; 
 }

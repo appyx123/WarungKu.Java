@@ -1,34 +1,32 @@
-package com.warungkupos.service;
+package com.warungkupos.service; // Sesuai struktur Anda
 
-import com.warungkupos.config.DatabaseManager; // Tambahkan import ini
+import com.warungkupos.config.DatabaseManager;
 import com.warungkupos.dao.CategoryDao;
-import com.warungkupos.dao.ProductDao;
+import com.warungkupos.dao.ProductDao; // Pastikan ProductDao ini adalah versi yang sudah diupdate
 import com.warungkupos.dao.SupplierDao;
 import com.warungkupos.dao.impl.CategoryDaoImpl;
-import com.warungkupos.dao.impl.ProductDaoImpl;
+import com.warungkupos.dao.impl.ProductDaoImpl; // Pastikan implementasinya juga versi terbaru
 import com.warungkupos.dao.impl.SupplierDaoImpl;
 import com.warungkupos.model.Category;
 import com.warungkupos.model.Product;
 import com.warungkupos.model.Supplier;
 
-import java.sql.Connection; // Tambahkan import ini
-import java.sql.SQLException; // Tambahkan import ini
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ProductManagementServiceImpl implements ProductManagementService {
 
     private final CategoryDao categoryDao;
     private final SupplierDao supplierDao;
-    private final ProductDao productDao;
+    private final ProductDao productDao; // Ini harus versi yang sudah diupdate
 
-    // Konstruktor default
     public ProductManagementServiceImpl() {
         this.categoryDao = new CategoryDaoImpl();
         this.supplierDao = new SupplierDaoImpl();
-        this.productDao = new ProductDaoImpl();
+        this.productDao = new ProductDaoImpl(); // Pastikan ProductDaoImpl yang diinisialisasi adalah versi terbaru
     }
 
-    // Konstruktor untuk dependency injection (lebih baik untuk testing)
     public ProductManagementServiceImpl(CategoryDao categoryDao, SupplierDao supplierDao, ProductDao productDao) {
         this.categoryDao = categoryDao;
         this.supplierDao = supplierDao;
@@ -123,6 +121,12 @@ public class ProductManagementServiceImpl implements ProductManagementService {
 
     @Override
     public void deleteSupplier(int supplierId) throws ServiceException, Exception {
+        // <--- PERBAIKAN: Pengecekan apakah supplier sedang digunakan oleh produk
+        if (productDao.isSupplierInUse(supplierId)) { // Menggunakan productDao
+            throw new ServiceException("Supplier tidak dapat dihapus karena masih digunakan oleh produk.");
+        }
+        // <--- AKHIR PERBAIKAN
+
         if(!supplierDao.deleteSupplier(supplierId)){
              throw new ServiceException("Gagal menghapus supplier. Supplier mungkin tidak ditemukan.");
         }
@@ -143,6 +147,11 @@ public class ProductManagementServiceImpl implements ProductManagementService {
         if (categoryDao.getCategoryById(product.getCategoryId()) == null) {
             throw new ServiceException("Kategori untuk produk tidak ditemukan atau tidak valid.");
         }
+        // Validasi Supplier: Pastikan supplier yang dipilih valid (ID tidak 0)
+        if (product.getSupplierId() == 0 || supplierDao.getSupplierById(product.getSupplierId()) == null) {
+             throw new ServiceException("Supplier untuk produk tidak ditemukan atau tidak valid.");
+        }
+
         if (productDao.getProductByName(product.getName().trim()) != null) {
             throw new ServiceException("Produk dengan nama '" + product.getName().trim() + "' sudah ada.");
         }
@@ -190,6 +199,11 @@ public class ProductManagementServiceImpl implements ProductManagementService {
         if (categoryDao.getCategoryById(product.getCategoryId()) == null) {
             throw new ServiceException("Kategori untuk produk tidak ditemukan atau tidak valid.");
         }
+        // Validasi Supplier: Pastikan supplier yang dipilih valid (ID tidak 0)
+        if (product.getSupplierId() == 0 || supplierDao.getSupplierById(product.getSupplierId()) == null) {
+             throw new ServiceException("Supplier untuk produk tidak ditemukan atau tidak valid.");
+        }
+
         Product existingProductWithSameName = productDao.getProductByName(product.getName().trim());
         if (existingProductWithSameName != null && existingProductWithSameName.getId() != product.getId()) {
             throw new ServiceException("Produk dengan nama '" + product.getName().trim() + "' sudah digunakan oleh produk lain.");
@@ -209,21 +223,20 @@ public class ProductManagementServiceImpl implements ProductManagementService {
     
     @Override
     public void updateProductStock(int productId, int newStock) throws ServiceException, Exception {
-        if (newStock < 0) {
-            throw new ServiceException("Stok baru tidak boleh negatif.");
-        }
-        // Operasi update stok tunggal ini sebaiknya juga dikelola dalam transaksi
         Connection conn = null;
         try {
-            Product product = productDao.getProductById(productId); // Baca info produk (bisa pakai koneksi sendiri DAO)
+            Product product = productDao.getProductById(productId);
             if (product == null) {
                 throw new ServiceException("Produk dengan ID " + productId + " tidak ditemukan.");
+            }
+            if (newStock < 0) {
+                throw new ServiceException("Stok baru tidak boleh negatif.");
             }
 
             conn = DatabaseManager.getConnection();
             conn.setAutoCommit(false);
 
-            if (!productDao.updateProductStock(productId, newStock, conn)) { // Panggil versi DAO dengan Connection
+            if (!productDao.updateProductStock(productId, newStock, conn)) {
                 throw new ServiceException("Gagal memperbarui stok produk di database.");
             }
             conn.commit();
@@ -231,29 +244,23 @@ public class ProductManagementServiceImpl implements ProductManagementService {
             if (conn != null) {
                 try {
                     conn.rollback();
-                } catch (SQLException rollbackEx) {
-                    // Log error rollback jika perlu
-                }
+                } catch (SQLException rollbackEx) { }
             }
             throw new ServiceException("Gagal memperbarui stok produk karena kesalahan database: " + sqlEx.getMessage(), sqlEx);
-        } catch (Exception e) { // Termasuk ServiceException dari getProductById
-             if (conn != null) { // Jika error terjadi setelah koneksi dibuka tapi sebelum commit
+        } catch (Exception e) {
+             if (conn != null) { 
                 try {
                     conn.rollback();
-                } catch (SQLException rollbackEx) {
-                    // Log error rollback
-                }
+                } catch (SQLException rollbackEx) { }
             }
-            if (e instanceof ServiceException) throw (ServiceException) e; // Lemparkan kembali ServiceException
-            throw new Exception("Gagal memperbarui stok produk: " + e.getMessage(), e); // Lemparkan sebagai Exception umum
+            if (e instanceof ServiceException) throw (ServiceException) e;
+            throw new Exception("Gagal memperbarui stok produk: " + e.getMessage(), e);
         } finally {
             if (conn != null) {
                 try {
-                    conn.setAutoCommit(true); // Kembalikan ke default
+                    conn.setAutoCommit(true);
                     conn.close();
-                } catch (SQLException ex) {
-                    // Log error penutupan koneksi
-                }
+                } catch (SQLException ex) { }
             }
         }
     }

@@ -25,12 +25,15 @@
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/service/ServiceException.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/view/customer/TransactionHistoryPanel.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/model/TransactionDetail.java</file>
+            <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/view/admin/UserManagementPanel.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/dao/impl/CategoryDaoImpl.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/util/AppConstants.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/dao/impl/RecycleBinDaoImpl.java</file>
+            <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/controller/AdminMainDashboardController.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/dao/impl/UserDaoImpl.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/model/StockAlert.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/dao/impl/SupplierDaoImpl.java</file>
+            <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/controller/UserController.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/controller/StockAlertController.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/controller/ReportController.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/dao/SupplierDao.java</file>
@@ -40,6 +43,7 @@
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/controller/SupplierController.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/util/DateFormatter.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/view/customer/CustomerDashboardView.java</file>
+            <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/view/admin/AdminMainDashboardPanel.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/view/auth/SignUpView.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/controller/RecycleBinController.java</file>
             <file>file:/C:/Users/USER/OneDrive/Desktop/TUBES%20WEB/PBO/13020230290-PBO/src/com/warungkupos/dao/UserDao.java</file>

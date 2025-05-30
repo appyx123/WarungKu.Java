@@ -1,4 +1,3 @@
-// File: src/main/java/com/warungkupos/dao/impl/ProductDaoImpl.java
 package com.warungkupos.dao.impl;
 
 import com.warungkupos.config.DatabaseManager;
@@ -21,7 +20,6 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public void addProduct(Product product) throws SQLException {
-        // PERBAIKAN: Tambahkan supplier_id ke query INSERT
         String sql = "INSERT INTO Products (name, price, stock, category_id, supplier_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -30,7 +28,12 @@ public class ProductDaoImpl implements ProductDao {
             pstmt.setBigDecimal(2, product.getPrice());
             pstmt.setInt(3, product.getStock());
             pstmt.setInt(4, product.getCategoryId());
-            pstmt.setInt(5, product.getSupplierId()); // <--- FIELD BARU
+            // Set supplier_id menjadi NULL di DB jika id = 0 (placeholder "Pilih Supplier")
+            if (product.getSupplierId() == 0) {
+                pstmt.setNull(5, java.sql.Types.INTEGER);
+            } else {
+                pstmt.setInt(5, product.getSupplierId());
+            }
             
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
@@ -47,11 +50,10 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public Product getProductById(int id) throws SQLException {
-        // PERBAIKAN: Lakukan JOIN dengan Suppliers untuk mendapatkan supplier_name
         String sql = "SELECT p.id, p.name, p.price, p.stock, p.category_id, c.name as category_name, p.supplier_id, s.name as supplier_name " +
                      "FROM Products p " +
                      "JOIN Categories c ON p.category_id = c.id " +
-                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + // <--- JOIN BARU (LEFT JOIN agar produk tetap tampil meski tanpa supplier)
+                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + 
                      "WHERE p.id = ?";
         Product product = null;
         try (Connection conn = DatabaseManager.getConnection();
@@ -67,8 +69,8 @@ public class ProductDaoImpl implements ProductDao {
                     product.setStock(rs.getInt("stock"));
                     product.setCategoryId(rs.getInt("category_id"));
                     product.setCategoryName(rs.getString("category_name"));
-                    product.setSupplierId(rs.getInt("supplier_id")); // <--- FIELD BARU
-                    product.setSupplierName(rs.getString("supplier_name")); // <--- FIELD BARU
+                    product.setSupplierId(rs.getInt("supplier_id")); 
+                    product.setSupplierName(rs.getString("supplier_name")); 
                 }
             }
         }
@@ -77,11 +79,10 @@ public class ProductDaoImpl implements ProductDao {
     
     @Override
     public Product getProductByName(String name) throws SQLException {
-        // PERBAIKAN: Lakukan JOIN dengan Suppliers untuk mendapatkan supplier_name
         String sql = "SELECT p.id, p.name, p.price, p.stock, p.category_id, c.name as category_name, p.supplier_id, s.name as supplier_name " +
                      "FROM Products p " +
                      "JOIN Categories c ON p.category_id = c.id " +
-                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + // <--- JOIN BARU
+                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + 
                      "WHERE p.name = ?";
         Product product = null;
         try (Connection conn = DatabaseManager.getConnection();
@@ -96,8 +97,8 @@ public class ProductDaoImpl implements ProductDao {
                     product.setStock(rs.getInt("stock"));
                     product.setCategoryId(rs.getInt("category_id"));
                     product.setCategoryName(rs.getString("category_name"));
-                    product.setSupplierId(rs.getInt("supplier_id")); // <--- FIELD BARU
-                    product.setSupplierName(rs.getString("supplier_name")); // <--- FIELD BARU
+                    product.setSupplierId(rs.getInt("supplier_id")); 
+                    product.setSupplierName(rs.getString("supplier_name")); 
                 }
             }
         }
@@ -106,11 +107,10 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> getAllProducts() throws SQLException {
-        // PERBAIKAN: Lakukan JOIN dengan Suppliers untuk mendapatkan supplier_name
         String sql = "SELECT p.id, p.name, p.price, p.stock, p.category_id, c.name as category_name, p.supplier_id, s.name as supplier_name " +
                      "FROM Products p " +
                      "JOIN Categories c ON p.category_id = c.id " +
-                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + // <--- JOIN BARU
+                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + 
                      "ORDER BY p.name ASC";
         List<Product> products = new ArrayList<>();
         try (Connection conn = DatabaseManager.getConnection();
@@ -125,8 +125,8 @@ public class ProductDaoImpl implements ProductDao {
                 product.setStock(rs.getInt("stock"));
                 product.setCategoryId(rs.getInt("category_id"));
                 product.setCategoryName(rs.getString("category_name"));
-                product.setSupplierId(rs.getInt("supplier_id")); // <--- FIELD BARU
-                product.setSupplierName(rs.getString("supplier_name")); // <--- FIELD BARU
+                product.setSupplierId(rs.getInt("supplier_id")); 
+                product.setSupplierName(rs.getString("supplier_name")); 
                 products.add(product);
             }
         }
@@ -135,11 +135,10 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> getProductsByCategoryId(int categoryId) throws SQLException {
-        // PERBAIKAN: Lakukan JOIN dengan Suppliers untuk mendapatkan supplier_name
         String sql = "SELECT p.id, p.name, p.price, p.stock, p.category_id, c.name as category_name, p.supplier_id, s.name as supplier_name " +
                      "FROM Products p " +
                      "JOIN Categories c ON p.category_id = c.id " +
-                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + // <--- JOIN BARU
+                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + 
                      "WHERE p.category_id = ? ORDER BY p.name ASC";
         List<Product> products = new ArrayList<>();
         try (Connection conn = DatabaseManager.getConnection();
@@ -155,8 +154,8 @@ public class ProductDaoImpl implements ProductDao {
                     product.setStock(rs.getInt("stock"));
                     product.setCategoryId(rs.getInt("category_id"));
                     product.setCategoryName(rs.getString("category_name"));
-                    product.setSupplierId(rs.getInt("supplier_id")); // <--- FIELD BARU
-                    product.setSupplierName(rs.getString("supplier_name")); // <--- FIELD BARU
+                    product.setSupplierId(rs.getInt("supplier_id")); 
+                    product.setSupplierName(rs.getString("supplier_name")); 
                     products.add(product);
                 }
             }
@@ -166,13 +165,11 @@ public class ProductDaoImpl implements ProductDao {
     
     @Override
     public List<Product> searchProducts(String keyword) throws SQLException {
-        // PERBAIKAN: Lakukan JOIN dengan Suppliers untuk mendapatkan supplier_name
-        // PERBAIKAN: Tambahkan pencarian berdasarkan supplier.name juga
         String sql = "SELECT p.id, p.name, p.price, p.stock, p.category_id, c.name as category_name, p.supplier_id, s.name as supplier_name " +
                      "FROM Products p " +
                      "JOIN Categories c ON p.category_id = c.id " +
-                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + // <--- JOIN BARU
-                     "WHERE LOWER(p.name) LIKE LOWER(?) OR LOWER(c.name) LIKE LOWER(?) OR LOWER(s.name) LIKE LOWER(?) " + // <--- PENCARIAN BARU
+                     "LEFT JOIN Suppliers s ON p.supplier_id = s.id " + 
+                     "WHERE LOWER(p.name) LIKE LOWER(?) OR LOWER(c.name) LIKE LOWER(?) OR LOWER(s.name) LIKE LOWER(?) " + 
                      "ORDER BY p.name ASC";
         List<Product> products = new ArrayList<>();
         try (Connection conn = DatabaseManager.getConnection();
@@ -181,7 +178,7 @@ public class ProductDaoImpl implements ProductDao {
             String searchKeyword = "%" + keyword + "%";
             pstmt.setString(1, searchKeyword);
             pstmt.setString(2, searchKeyword);
-            pstmt.setString(3, searchKeyword); // <--- PARAMETER BARU
+            pstmt.setString(3, searchKeyword); 
             
             try (ResultSet rs = pstmt.executeQuery()) {
                  while (rs.next()) {
@@ -192,8 +189,8 @@ public class ProductDaoImpl implements ProductDao {
                     product.setStock(rs.getInt("stock"));
                     product.setCategoryId(rs.getInt("category_id"));
                     product.setCategoryName(rs.getString("category_name"));
-                    product.setSupplierId(rs.getInt("supplier_id")); // <--- FIELD BARU
-                    product.setSupplierName(rs.getString("supplier_name")); // <--- FIELD BARU
+                    product.setSupplierId(rs.getInt("supplier_id")); 
+                    product.setSupplierName(rs.getString("supplier_name")); 
                     products.add(product);
                 }
             }
@@ -203,7 +200,6 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public boolean updateProduct(Product product) throws SQLException {
-        // PERBAIKAN: Tambahkan supplier_id ke query UPDATE
         String sql = "UPDATE Products SET name = ?, price = ?, stock = ?, category_id = ?, supplier_id = ? WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -212,7 +208,12 @@ public class ProductDaoImpl implements ProductDao {
             pstmt.setBigDecimal(2, product.getPrice());
             pstmt.setInt(3, product.getStock());
             pstmt.setInt(4, product.getCategoryId());
-            pstmt.setInt(5, product.getSupplierId()); // <--- FIELD BARU
+            // Set supplier_id menjadi NULL di DB jika id = 0 (placeholder "Pilih Supplier")
+            if (product.getSupplierId() == 0) {
+                pstmt.setNull(5, java.sql.Types.INTEGER);
+            } else {
+                pstmt.setInt(5, product.getSupplierId());
+            }
             pstmt.setInt(6, product.getId());
             
             int affectedRows = pstmt.executeUpdate();
@@ -241,5 +242,21 @@ public class ProductDaoImpl implements ProductDao {
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
         }
+    }
+    
+    // <--- METODE BARU: isSupplierInUse
+    @Override
+    public boolean isSupplierInUse(int supplierId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Products WHERE supplier_id = ?";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, supplierId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
     }
 }

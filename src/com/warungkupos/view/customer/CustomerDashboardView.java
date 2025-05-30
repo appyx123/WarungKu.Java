@@ -1,23 +1,25 @@
 package com.warungkupos.view.customer;
 
 import com.warungkupos.controller.AuthController;
-import com.warungkupos.controller.CustomerController; // Impor CustomerController
+import com.warungkupos.controller.CustomerController;
 import com.warungkupos.model.User;
 import com.warungkupos.service.ProductManagementService;
 import com.warungkupos.service.TransactionHandlingService;
 import com.warungkupos.service.AuthenticationServiceImpl;
-import com.warungkupos.service.ProductManagementServiceImpl; // Impor implementasi service
-import com.warungkupos.service.TransactionHandlingServiceImpl; // Impor implementasi service
+import com.warungkupos.service.ProductManagementServiceImpl;
+import com.warungkupos.service.TransactionHandlingServiceImpl;
 import com.warungkupos.util.AppConstants;
 import com.warungkupos.util.UIManagerSetup;
 import com.warungkupos.view.auth.LoginView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.ActionEvent;
+import java.awt.EventQueue;
+
 
 public class CustomerDashboardView extends JFrame {
 
@@ -32,13 +34,12 @@ public class CustomerDashboardView extends JFrame {
     public CustomerDashboardView(User user) {
         this.loggedInUser = user;
         if (user == null) {
-            // Tindakan darurat jika user null, seharusnya tidak terjadi jika alur login benar
             JOptionPane.showMessageDialog(null, "Error: Data pengguna tidak valid.", "Error Kritis", JOptionPane.ERROR_MESSAGE);
-            System.exit(1); // Keluar aplikasi karena state tidak valid
+            System.exit(1);
         }
 
         String title = AppConstants.CUSTOMER_DASHBOARD_TITLE;
-        if (user.getFullName() != null && !user.getFullName().isEmpty()) {
+        if (user.getFullName() != null && !user.getFullName().isEmpty()) { // <--- PERBAIKAN DI SINI
             title = "Selamat Datang, " + user.getFullName() + "! - " + AppConstants.APPLICATION_NAME;
         } else {
             title = "Selamat Datang, " + user.getUsername() + "! - " + AppConstants.APPLICATION_NAME;
@@ -49,7 +50,6 @@ public class CustomerDashboardView extends JFrame {
         setMinimumSize(new Dimension(850, 600));
         setLocationRelativeTo(null);
 
-        // Inisialisasi services
         this.productManagementService = new ProductManagementServiceImpl();
         this.transactionHandlingService = new TransactionHandlingServiceImpl();
 
@@ -63,7 +63,7 @@ public class CustomerDashboardView extends JFrame {
         topPanel.setBackground(AppConstants.COLOR_PRIMARY_BLUE);
 
         String welcomeMessage = "Pelanggan Dashboard";
-        if (loggedInUser.getFullName() != null && !loggedInUser.getFullName().isEmpty()) {
+        if (loggedInUser.getFullName() != null && !loggedInUser.getFullName().isEmpty()) { // <--- PERBAIKAN DI SINI
             welcomeMessage = loggedInUser.getFullName();
         } else {
              welcomeMessage = loggedInUser.getUsername();
@@ -95,13 +95,8 @@ public class CustomerDashboardView extends JFrame {
 
         // --- Mengisi Tab dengan Panel Customer ---
 
-        // 1. Tab Lihat Produk
+        // 1. Tab Transaksi (sebelumnya "Lihat Produk")
         ProductDisplayPanel productDisplayPanel = new ProductDisplayPanel(this.loggedInUser);
-        // TransactionHistoryPanel akan dibuat di bawah, tapi belum di-pass ke CustomerController
-        // karena CustomerController yang kita buat sebelumnya hanya handle ProductDisplayPanel
-        // Kita perlu CustomerController yang lebih komprehensif atau dua controller terpisah.
-        // Untuk sekarang, kita akan buat CustomerController yang mengelola kedua panel.
-        
         // 2. Tab Riwayat Transaksi
         TransactionHistoryPanel transactionHistoryPanel = new TransactionHistoryPanel(this.loggedInUser);
 
@@ -110,7 +105,7 @@ public class CustomerDashboardView extends JFrame {
                                productManagementService, transactionHandlingService, 
                                this.loggedInUser);
         
-        tabbedPane.addTab("Lihat Produk", productDisplayPanel);
+        tabbedPane.addTab("Transaksi", productDisplayPanel);
         tabbedPane.addTab("Riwayat Transaksi Saya", transactionHistoryPanel);
 
         add(tabbedPane, BorderLayout.CENTER);

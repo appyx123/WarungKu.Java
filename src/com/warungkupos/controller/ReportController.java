@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.util.Calendar; // <--- TAMBAHKAN IMPORT INI
 import java.util.Date;
 import java.util.List;
 
@@ -27,10 +28,26 @@ public class ReportController {
 
     private void initializeView() {
         loadProductStockSummary();
-        view.displayTotalSales(BigDecimal.ZERO); // Tampilkan total penjualan awal sebagai 0
-        // Kosongkan field tanggal
-        // Untuk ini, ReportPanel perlu getter untuk JTextFields atau metode clearDateFields()
-        // Untuk sekarang, kita hanya mengandalkan user untuk mengosongkan jika perlu.
+        view.displayTotalSales(BigDecimal.ZERO); 
+        
+        // --- BARU: Auto-fill filter tanggal dan generate laporan ---
+        Calendar cal = Calendar.getInstance();
+        Date today = cal.getTime(); // Hari ini
+
+        cal.add(Calendar.MONTH, -1); // Kurangi 1 bulan
+        Date oneMonthAgo = cal.getTime(); // Satu bulan lalu
+
+        // Format tanggal ke string yyyy-MM-dd
+        String startDateString = DateFormatter.formatCustom(oneMonthAgo, DateFormatter.STORAGE_DATE_FORMAT);
+        String endDateString = DateFormatter.formatCustom(today, DateFormatter.STORAGE_DATE_FORMAT);
+
+        // Set ke field di view
+        view.setStartDateField(startDateString);
+        view.setEndDateField(endDateString);
+
+        // Otomatis tampilkan laporan penjualan untuk periode ini
+        generateSalesReport();
+        // --- AKHIR BARU ---
     }
 
     private void attachListeners() {
@@ -39,11 +56,9 @@ public class ReportController {
     }
 
     private void generateSalesReport() {
-        // --- Panggil validasi di sisi View terlebih dahulu ---
         if (!view.validateDateInputs()) {
-            return; // Jika validasi di view gagal, berhenti di sini
+            return;
         }
-        // --- Akhir Panggilan Validasi ---
 
         String startDateStr = view.getStartDateFieldText();
         String endDateStr = view.getEndDateFieldText();

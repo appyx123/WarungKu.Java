@@ -1,42 +1,42 @@
 package com.warungkupos.view.customer;
 
 import com.warungkupos.model.Product;
-import com.warungkupos.model.User;
+import com.warungkupos.model.User; 
 import com.warungkupos.util.AppConstants;
-import com.warungkupos.util.DateFormatter;
-import com.warungkupos.util.InputValidator;
+import com.warungkupos.util.DateFormatter; 
+import com.warungkupos.util.InputValidator; 
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer; // <--- PASTIKAN IMPORT INI ADA
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.math.BigDecimal;
-import java.text.NumberFormat; // <--- PASTIKAN IMPORT INI ADA
-import java.util.HashMap;
+import java.text.NumberFormat; 
+import java.util.HashMap; 
 import java.util.List;
-import java.util.Locale; // <--- PASTIKAN IMPORT INI ADA
+import java.util.Locale; 
 import java.util.Map;
 
 public class ProductDisplayPanel extends JPanel {
 
     private JTable productDisplayTable;
-    private DefaultTableModel productTableModel;
+    private DefaultTableModel productTableModel; 
     private JScrollPane productScrollPane;
 
     private JLabel selectedProductNameLabel;
-    private JTextField selectedProductIdField;
+    private JTextField selectedProductIdField; 
     private JSpinner quantitySpinner;
-    private JButton addToCartButton;
-    private JButton clearSelectionButton;
+    private JButton addToCartButton; 
+    private JButton clearSelectionButton; 
 
     private JTable cartTable;
     private DefaultTableModel cartTableModel;
-    public JLabel cartTotalLabel;
+    public JLabel cartTotalLabel; 
     private JButton removeFromCartButton;
     private JButton checkoutButton;
 
-    private User loggedInUser;
+    private User loggedInUser; 
     private NumberFormat currencyFormatter;
 
     public ProductDisplayPanel(User loggedInUser) {
@@ -48,7 +48,7 @@ public class ProductDisplayPanel extends JPanel {
 
         initComponents();
     }
-
+    
     private void initComponents() {
         JPanel productListPanel = new JPanel(new BorderLayout());
         productListPanel.setBorder(BorderFactory.createTitledBorder(
@@ -63,8 +63,8 @@ public class ProductDisplayPanel extends JPanel {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 switch (columnIndex) {
-                    case 0: case 4: return Integer.class;
-                    case 3: return Double.class;
+                    case 0: case 4: return Integer.class; 
+                    case 3: return Double.class; 
                     default: return String.class;
                 }
             }
@@ -78,17 +78,17 @@ public class ProductDisplayPanel extends JPanel {
         productDisplayTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         productDisplayTable.setAutoCreateRowSorter(true);
 
-        productDisplayTable.getColumnModel().getColumn(3).setCellRenderer(new CurrencyRenderer());
+        productDisplayTable.getColumnModel().getColumn(3).setCellRenderer(new CurrencyRenderer()); 
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
-        productDisplayTable.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
-        productDisplayTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        productDisplayTable.getColumnModel().getColumn(0).setCellRenderer(rightRenderer); 
+        productDisplayTable.getColumnModel().getColumn(4).setCellRenderer(rightRenderer); 
         
-        productDisplayTable.getColumnModel().getColumn(0).setPreferredWidth(50);
-        productDisplayTable.getColumnModel().getColumn(1).setPreferredWidth(250);
-        productDisplayTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        productDisplayTable.getColumnModel().getColumn(3).setPreferredWidth(120);
-        productDisplayTable.getColumnModel().getColumn(4).setPreferredWidth(70);
+        productDisplayTable.getColumnModel().getColumn(0).setPreferredWidth(50);  
+        productDisplayTable.getColumnModel().getColumn(1).setPreferredWidth(250); 
+        productDisplayTable.getColumnModel().getColumn(2).setPreferredWidth(150); 
+        productDisplayTable.getColumnModel().getColumn(3).setPreferredWidth(120); 
+        productDisplayTable.getColumnModel().getColumn(4).setPreferredWidth(70);  
 
         productScrollPane = new JScrollPane(productDisplayTable);
         productListPanel.add(productScrollPane, BorderLayout.CENTER);
@@ -109,22 +109,22 @@ public class ProductDisplayPanel extends JPanel {
         addToCartPanel.add(selectedProductNameLabel, gbc);
         
         selectedProductIdField = new JTextField(5);
-        selectedProductIdField.setVisible(false);
+        selectedProductIdField.setVisible(false); 
 
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 1; gbc.anchor = GridBagConstraints.WEST;
         addToCartPanel.add(new JLabel("Jumlah Beli:"), gbc);
         
-        SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, 100, 1);
+        SpinnerModel spinnerModel = new SpinnerNumberModel(1, 1, 100, 1); 
         quantitySpinner = new JSpinner(spinnerModel);
         quantitySpinner.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor) quantitySpinner.getEditor();
         spinnerEditor.getTextField().setHorizontalAlignment(JTextField.RIGHT);
-        spinnerEditor.getTextField().setColumns(3);
+        spinnerEditor.getTextField().setColumns(3); 
         gbc.gridx = 1; gbc.gridy = 1; gbc.fill = GridBagConstraints.NONE; gbc.anchor = GridBagConstraints.WEST;
         addToCartPanel.add(quantitySpinner, gbc);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10,5));
-        addToCartButton = new JButton("Tambah ke Keranjang");
+        addToCartButton = new JButton("Tambah ke Keranjang"); 
         styleButton(addToCartButton, AppConstants.COLOR_PRIMARY_BLUE);
         
         clearSelectionButton = new JButton("Batal Pilih");
@@ -153,8 +153,8 @@ public class ProductDisplayPanel extends JPanel {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 switch (columnIndex) {
-                    case 0: case 3: return Integer.class;
-                    case 2: case 4: return Double.class;
+                    case 0: case 3: return Integer.class; 
+                    case 2: case 4: return Double.class; 
                     default: return String.class;
                 }
             }
@@ -168,10 +168,10 @@ public class ProductDisplayPanel extends JPanel {
         cartTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         cartTable.setAutoCreateRowSorter(true);
 
-        cartTable.getColumnModel().getColumn(2).setCellRenderer(new CurrencyRenderer());
-        cartTable.getColumnModel().getColumn(4).setCellRenderer(new CurrencyRenderer());
-        cartTable.getColumnModel().getColumn(0).setCellRenderer(rightRenderer);
-        cartTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer);
+        cartTable.getColumnModel().getColumn(2).setCellRenderer(new CurrencyRenderer()); 
+        cartTable.getColumnModel().getColumn(4).setCellRenderer(new CurrencyRenderer()); 
+        cartTable.getColumnModel().getColumn(0).setCellRenderer(rightRenderer); 
+        cartTable.getColumnModel().getColumn(3).setCellRenderer(rightRenderer); 
 
         cartTable.getColumnModel().getColumn(0).setPreferredWidth(50);
         cartTable.getColumnModel().getColumn(1).setPreferredWidth(200);
@@ -182,13 +182,25 @@ public class ProductDisplayPanel extends JPanel {
         JScrollPane cartScrollPane = new JScrollPane(cartTable);
         cartPanel.add(cartScrollPane, BorderLayout.CENTER);
 
-        JPanel cartSummaryPanel = new JPanel(new BorderLayout(10, 5));
+        // --- PERBAIKAN: Layout untuk cartSummaryPanel ---
+        JPanel cartSummaryPanel = new JPanel(new GridBagLayout()); // <--- UBAH INI KE GridBagLayout
+        GridBagConstraints gbcSummary = new GridBagConstraints();
+        gbcSummary.insets = new Insets(5, 5, 5, 5); // Padding
+        gbcSummary.fill = GridBagConstraints.HORIZONTAL; // Isi ruang horizontal
+
+        // Label Total Keranjang
         cartTotalLabel = new JLabel("Total Keranjang: " + currencyFormatter.format(0));
         cartTotalLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         cartTotalLabel.setForeground(new Color(0, 100, 0));
-        cartSummaryPanel.add(cartTotalLabel, BorderLayout.WEST);
+        gbcSummary.gridx = 0; // Kolom pertama
+        gbcSummary.gridy = 0; // Baris pertama
+        gbcSummary.weightx = 1.0; // Beri bobot agar mengisi ruang kosong ke kanan
+        gbcSummary.anchor = GridBagConstraints.WEST; // Rata kiri
+        cartSummaryPanel.add(cartTotalLabel, gbcSummary);
 
+        // Panel Tombol Aksi Keranjang
         JPanel cartActionButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        cartActionButtonsPanel.setOpaque(false); // Transparan agar background panel induk terlihat
         removeFromCartButton = new JButton("Hapus dari Keranjang");
         styleButton(removeFromCartButton, AppConstants.COLOR_ERROR_RED);
         checkoutButton = new JButton("Checkout");
@@ -197,20 +209,24 @@ public class ProductDisplayPanel extends JPanel {
 
         cartActionButtonsPanel.add(removeFromCartButton);
         cartActionButtonsPanel.add(checkoutButton);
-        cartSummaryPanel.add(cartActionButtonsPanel, BorderLayout.EAST);
-        
+        gbcSummary.gridx = 1; // Kolom kedua
+        gbcSummary.gridy = 0; // Baris pertama
+        gbcSummary.weightx = 0; // Jangan beri bobot, agar tetap di kanan
+        gbcSummary.anchor = GridBagConstraints.EAST; // Rata kanan
+        cartSummaryPanel.add(cartActionButtonsPanel, gbcSummary);
+        // --- AKHIR PERBAIKAN ---
+
         cartPanel.add(cartSummaryPanel, BorderLayout.SOUTH);
         
-        enableCartActions(false);
+        enableCartActions(false); 
 
         JSplitPane leftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, productListPanel, addToCartPanel);
-        leftSplitPane.setResizeWeight(0.7);
+        leftSplitPane.setResizeWeight(0.7); 
         leftSplitPane.setOneTouchExpandable(true);
         leftSplitPane.setContinuousLayout(true);
 
-        // PERBAIKAN: JSplitPane.SPLIT_PANE menjadi JSplitPane.HORIZONTAL_SPLIT
-        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftSplitPane, cartPanel); // <--- UBAH DI SINI
-        mainSplitPane.setResizeWeight(0.6);
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftSplitPane, cartPanel); 
+        mainSplitPane.setResizeWeight(0.6); 
         mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setContinuousLayout(true);
 
@@ -233,7 +249,7 @@ public class ProductDisplayPanel extends JPanel {
         if (!enabled) {
             selectedProductNameLabel.setText("Pilih produk dari tabel di atas");
             selectedProductIdField.setText("");
-            quantitySpinner.setValue(1);
+            quantitySpinner.setValue(1); 
         }
     }
 
@@ -243,14 +259,14 @@ public class ProductDisplayPanel extends JPanel {
     }
 
     public void displayProducts(List<Product> products) {
-        productTableModel.setRowCount(0);
+        productTableModel.setRowCount(0); 
         if (products != null) {
             for (Product product : products) {
                 Object[] row = new Object[]{
                         product.getId(),
                         product.getName(),
                         product.getCategoryName(),
-                        product.getPrice().doubleValue(),
+                        product.getPrice().doubleValue(), 
                         product.getStock()
                 };
                 productTableModel.addRow(row);
@@ -270,11 +286,11 @@ public class ProductDisplayPanel extends JPanel {
             
             if (stock > 0) {
                  enableAddToCartForm(true);
-                 ((SpinnerNumberModel) quantitySpinner.getModel()).setMaximum(stock);
-                 quantitySpinner.setValue(1);
+                 ((SpinnerNumberModel) quantitySpinner.getModel()).setMaximum(stock); 
+                 quantitySpinner.setValue(1); 
             } else {
                  selectedProductNameLabel.setText(productName + " (Stok Habis)");
-                 enableAddToCartForm(false);
+                 enableAddToCartForm(false); 
             }
         } else {
             clearAddToCartForm();
@@ -286,7 +302,7 @@ public class ProductDisplayPanel extends JPanel {
         enableAddToCartForm(false);
     }
 
-    public void displayCartItems(Map<Product, Integer> cartItems) {
+    public void displayCartItems(Map<Product, Integer> cartItems) { 
         cartTableModel.setRowCount(0);
         BigDecimal currentTotal = BigDecimal.ZERO;
         if (cartItems != null) {
@@ -299,14 +315,14 @@ public class ProductDisplayPanel extends JPanel {
                 cartTableModel.addRow(new Object[]{
                     product.getId(),
                     product.getName(),
-                    product.getPrice().doubleValue(),
+                    product.getPrice().doubleValue(), 
                     quantity,
-                    subtotal.doubleValue()
+                    subtotal.doubleValue() 
                 });
             }
         }
         cartTotalLabel.setText("Total Keranjang: " + currencyFormatter.format(currentTotal));
-        enableCartActions(!cartItems.isEmpty());
+        enableCartActions(!cartItems.isEmpty()); 
     }
     
     public void clearCartDisplay() {
@@ -317,7 +333,7 @@ public class ProductDisplayPanel extends JPanel {
     
     public Map<String, Integer> getProductAndQuantityForCart() {
         String productIdStr = selectedProductIdField.getText();
-        String quantityObj = quantitySpinner.getValue().toString();
+        String quantityObj = quantitySpinner.getValue().toString(); 
 
         if (!InputValidator.isNonEmpty(productIdStr, "ID Produk")) {
             showMessage("Silakan pilih produk dari tabel terlebih dahulu.", "Input Tidak Valid", JOptionPane.WARNING_MESSAGE);
@@ -325,7 +341,7 @@ public class ProductDisplayPanel extends JPanel {
         }
         if (!InputValidator.isValidInteger(quantityObj)) {
             showMessage("Kuantitas tidak valid. Mohon gunakan angka.", "Input Tidak Valid", JOptionPane.WARNING_MESSAGE);
-            quantitySpinner.requestFocusInWindow();
+            quantitySpinner.requestFocusInWindow(); 
             return null;
         }
         int quantity = Integer.parseInt(quantityObj);
@@ -336,7 +352,7 @@ public class ProductDisplayPanel extends JPanel {
         }
         
         int selectedRow = productDisplayTable.getSelectedRow();
-        if (selectedRow == -1) {
+        if (selectedRow == -1) { 
             showMessage("Produk tidak terpilih di tabel.", "Input Tidak Valid", JOptionPane.WARNING_MESSAGE);
             return null;
         }
@@ -361,7 +377,7 @@ public class ProductDisplayPanel extends JPanel {
     public String getSelectedProductIdInForm() { return selectedProductIdField.getText(); }
     public User getLoggedInUser() { return loggedInUser; }
 
-    public JTable getCartTable() { return cartTable; }
+    public JTable getCartTable() { return cartTable; } 
     public JButton getRemoveFromCartButton() { return removeFromCartButton; }
     public JButton getCheckoutButton() { return checkoutButton; }
 
@@ -379,7 +395,7 @@ public class ProductDisplayPanel extends JPanel {
             localCurrencyFormatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
         }
 
-        @Override
+        @Override 
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {

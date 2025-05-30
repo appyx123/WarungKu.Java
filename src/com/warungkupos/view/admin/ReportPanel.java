@@ -3,7 +3,7 @@ package com.warungkupos.view.admin;
 import com.warungkupos.model.Product;
 import com.warungkupos.util.AppConstants;
 import com.warungkupos.util.DateFormatter;
-import com.warungkupos.util.InputValidator; // Import InputValidator
+import com.warungkupos.util.InputValidator;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -12,9 +12,9 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Date; // Tambahkan import ini
 
 public class ReportPanel extends JPanel {
 
@@ -160,15 +160,21 @@ public class ReportPanel extends JPanel {
     public String getStartDateFieldText() { return startDateField.getText().trim(); }
     public String getEndDateFieldText() { return endDateField.getText().trim(); }
     
-    /**
-     * Melakukan validasi input tanggal mulai dan tanggal akhir untuk laporan penjualan.
-     * @return true jika input tanggal valid (sesuai format yyyy-MM-dd dan rentang), false jika tidak valid.
-     */
+    // <--- METODE BARU: Setter untuk field tanggal
+    public void setStartDateField(String dateString) {
+        this.startDateField.setText(dateString);
+    }
+
+    public void setEndDateField(String dateString) {
+        this.endDateField.setText(dateString);
+    }
+    // <--- AKHIR METODE BARU
+    
     public boolean validateDateInputs() {
         String startDateStr = startDateField.getText().trim();
         String endDateStr = endDateField.getText().trim();
 
-        if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
+        if (startDateStr.isEmpty() || endDateStr.isEmpty()) { // Cek jika ada yang kosong
             showMessage("Tanggal Mulai dan Tanggal Akhir harus diisi untuk laporan penjualan.", "Input Tanggal Tidak Lengkap", JOptionPane.WARNING_MESSAGE);
             if (startDateStr.isEmpty()) startDateField.requestFocusInWindow(); else endDateField.requestFocusInWindow();
             return false;
