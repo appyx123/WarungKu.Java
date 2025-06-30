@@ -10,6 +10,7 @@ import com.warungkupos.util.UIManagerSetup;
 import java.awt.EventQueue;
 
 public class Main {
+    
 
     public static void main(String[] args) {
         UIManagerSetup.setupLookAndFeel();
