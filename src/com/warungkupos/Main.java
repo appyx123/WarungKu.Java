@@ -1,16 +1,14 @@
-// File: src/main/java/com/warungkupos/Main.java (MODIFIKASI)
 package com.warungkupos;
 
 import com.warungkupos.controller.AuthController;
 import com.warungkupos.service.AuthenticationService;
-import com.warungkupos.service.AuthenticationServiceImpl; // Implementasi service
+import com.warungkupos.service.AuthenticationServiceImpl;
 import com.warungkupos.util.UIManagerSetup;
-// import com.warungkupos.view.auth.LoginView; // Tidak perlu import LoginView lagi di sini
 
 import java.awt.EventQueue;
 
 public class Main {
-    
+
 
     public static void main(String[] args) {
         UIManagerSetup.setupLookAndFeel();
